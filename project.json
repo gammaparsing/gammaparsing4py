@@ -1,0 +1,9 @@
+{
+    "name": "gammaparsing4py",
+    "launch-configurations": {
+        "test-suite": {
+            "target": "testing",
+            "description": "Running the test suite"
+        }
+    }
+}

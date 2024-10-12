@@ -1,0 +1,5 @@
+# Ignore playground
+playground
+
+# Build
+dist/

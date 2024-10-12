@@ -1,0 +1,21 @@
+rootSymbol S;
+
+patterns{
+    'id' <-- "[a-zA-Z_][0-9a-zA-Z_]*";
+
+    'number' <-- "[0-9]+";
+
+    'binary-operator' <-- "\+|\*|-|/|^|:";
+    '(' <-- "\(";
+    ')' <-- "\)";
+
+    'blank' <-- "\s+";
+}
+
+rules {
+    S => E;
+    "biop" : E => E 'binary-operator' E;
+    "var" : E => 'id';
+    "parenthesis" : E => '(' E ')';
+    "number" : E => 'number';
+}

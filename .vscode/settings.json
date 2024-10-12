@@ -1,0 +1,10 @@
+{
+    "python.analysis.extraPaths": [
+        "./pengine/python/engine-libs/",
+        "./subprojects/gammaparsing4py/src/python"
+    ],
+    "python.autoComplete.extraPaths": [
+        "./pengine/python/engine-libs/",
+        "./subprojects/gammaparsing4py/src/python"
+    ]
+}
