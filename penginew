@@ -1,0 +1,6 @@
+#!/bin/bash
+
+mainPath=$(readlink -f "$0")
+projectDir=$(dirname "$mainPath")
+
+bash "$projectDir/pengine/main.sh" $*
