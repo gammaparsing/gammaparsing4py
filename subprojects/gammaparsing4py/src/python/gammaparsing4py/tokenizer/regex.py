@@ -1,8 +1,8 @@
+from __future__ import annotations
 from collections import deque
 from io import StringIO
 import itertools
 from typing import Callable, Iterable, Reversible, TypeVar
-from typing_extensions import Self
 
 from gammaparsing4py.core.charflow import CharFlow
 
@@ -31,7 +31,7 @@ def flatten(
 
 class Regex:
 
-    def getChildren(self) -> list[Self]:
+    def getChildren(self) -> list[Regex]:
         raise NotImplementedError()
 
     def getShortName(self) -> str:
@@ -51,7 +51,7 @@ class RegexChoice(Regex):
     def __init__(self, options: list[Regex]):
         self.options: list[Regex] = options
 
-    def getChildren(self) -> list[Self]:
+    def getChildren(self) -> list[RegexChoice]:
         return self.options
 
     def getShortName(self) -> str:
@@ -74,7 +74,7 @@ class RegexSequence(Regex):
     def __init__(self, items: list[Regex]):
         self.items: list[Regex] = items
 
-    def getChildren(self) -> list[Self]:
+    def getChildren(self) -> list[RegexSequence]:
         return self.items
 
     def getShortName(self) -> str:
@@ -102,7 +102,7 @@ class RegexQuantified(Regex):
         self.quantifier: int = quantifier
         self.target: Regex = target
 
-    def getChildren(self) -> list[Self]:
+    def getChildren(self) -> list[RegexQuantified]:
         return [self.target]
 
     def getShortName(self) -> str:
@@ -118,7 +118,7 @@ class RegexRange:
     def getShortRepr(self):
         return "{} -> {}".format(self.start, self.end)
 
-    def copy(self) -> Self:
+    def copy(self) -> RegexRange:
         return RegexRange(self.start, self.end)
 
     def __repr__(self) -> str:
@@ -131,7 +131,7 @@ class RegexRange:
             and self.end == value.end
         )
 
-    def intersect(rangeA: Self, rangeB: Self):
+    def intersect(rangeA: RegexRange, rangeB: RegexRange):
         start = max(rangeA.start, rangeB.start)
         end = min(rangeA.end, rangeB.end)
 
@@ -139,18 +139,18 @@ class RegexRange:
             return RegexRange(start, end)
         return None
 
-    def isListDisjointed(target: list[Self]) -> bool:
+    def isListDisjointed(target: list[RegexRange]) -> bool:
         for i in range(len(target) - 1):
             if target[i].end >= target[i + 1].start:
                 return False
         return True
 
-    def ensureListDisjointure(target: list[Self]) -> bool:
+    def ensureListDisjointure(target: list[RegexRange]) -> bool:
         if not RegexRange.isListDisjointed(target):
             return RegexRange.disjointList(target)
         return target
 
-    def disjointList(target: list[Self]) -> list[Self]:
+    def disjointList(target: list[RegexRange]) -> list[RegexRange]:
         if len(target) <= 1:
             return target
 
@@ -171,8 +171,10 @@ class RegexRange:
         return result
 
     def intersectLists(
-        listA: list[Self], listB: list[Self], skipDisjointureChecking: bool = True
-    ) -> list[Self]:
+        listA: list[RegexRange],
+        listB: list[RegexRange],
+        skipDisjointureChecking: bool = True,
+    ) -> list[RegexRange]:
         if not skipDisjointureChecking:
             listA = RegexRange.ensureListDisjointure(listA)
             listB = RegexRange.ensureListDisjointure(listB)
@@ -195,10 +197,12 @@ class RegexRange:
 
         return result
 
-    def unionList(*lists: tuple[list[Self]]) -> list[Self]:
+    def unionList(*lists: tuple[list[RegexRange]]) -> list[RegexRange]:
         return RegexRange.disjointList(list(itertools.chain.from_iterable(lists)))
 
-    def invertList(target: list[Self], lowerLimit: int = 0, higherLimit: int = 0xFFFF):
+    def invertList(
+        target: list[RegexRange], lowerLimit: int = 0, higherLimit: int = 0xFFFF
+    ):
         result = []
         lower = lowerLimit
 
@@ -213,8 +217,8 @@ class RegexRange:
         return result
 
     def disjointValuedList(
-        data: Iterable[tuple[Self, set[T]]]
-    ) -> list[tuple[Self, set[T]]]:
+        data: Iterable[tuple[RegexRange, set[T]]]
+    ) -> list[tuple[RegexRange, set[T]]]:
 
         points: list[tuple[int, bool, set[T]]] = []
 
@@ -261,7 +265,7 @@ class RegexClass(Regex):
     def __init__(self, ranges: list[RegexRange]):
         self.ranges: list[RegexRange] = ranges
 
-    def getChildren(self) -> list[Self]:
+    def getChildren(self) -> list[Regex]:
         return []
 
     def getShortName(self) -> str:

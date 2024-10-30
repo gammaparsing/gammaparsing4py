@@ -1,8 +1,8 @@
+from __future__ import annotations
 from collections import deque
 from io import StringIO
 import itertools
 from typing import Callable, Iterable
-from typing_extensions import Self
 
 from gammaparsing4py.core.charflow import CharFlow
 from gammaparsing4py.parser.symbols import (
@@ -17,7 +17,7 @@ from gammaparsing4py.utils import unfoldPostfix
 
 class GammaRegex:
 
-    def getChildren(self) -> list[Self]:
+    def getChildren(self) -> list[GammaRegex]:
         raise NotImplementedError()
 
     def getShortName(self) -> str:
@@ -103,7 +103,7 @@ class GammaRegexSymbol(GammaRegex):
     def __init__(self, symbol: Symbol):
         self.symbol: Symbol = symbol
 
-    def getChildren(self) -> list[Self]:
+    def getChildren(self) -> list[GammaRegexSymbol]:
         return []
 
     def getShortName(self) -> str:

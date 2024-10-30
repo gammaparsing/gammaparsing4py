@@ -1,6 +1,7 @@
+from __future__ import annotations
 from collections import deque
 from io import StringIO
-from typing import Callable, Iterable, Self
+from typing import Callable, Iterable
 from gammaparsing4py.core.charflow import CharFlow
 from gammaparsing4py.parser.gammaregex import (
     GammaRegex,
@@ -139,7 +140,7 @@ class ParserBuilderNode:
         sourceConstrainedRules: Iterable[ConstrainedMarkedRule],
         firstSets: dict[NonTerminal, set[AbstractTerminal]],
         generators: dict[NonTerminal, list[Rule]],
-    ) -> Self:
+    ) -> ParserBuilderNode:
         stack: deque[ConstrainedMarkedRule] = deque(sourceConstrainedRules)
         resultRules: set[ConstrainedMarkedRule] = set(stack)
 
