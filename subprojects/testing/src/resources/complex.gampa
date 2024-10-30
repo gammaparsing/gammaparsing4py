@@ -9,7 +9,7 @@ patterns{
     '(' <-- "\(";
     ')' <-- "\)";
 
-    'blank' <-- "\s+";
+    @SKIP 'blank' <-- "\s+";
 }
 
 rules {

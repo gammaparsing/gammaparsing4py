@@ -10,12 +10,17 @@ class Rule:
         nodes: list[GammaRegexNode],
         reversedNodes: list[GammaRegexNode],
         name: str = None,
+        tags: set[str] = None,
     ):
         self.id: int = None
         self.nonTerminal: NonTerminal = nonTerminal
         self.nodes: list[GammaRegexNode] = nodes
         self.reversedNodes: list[GammaRegexNode] = reversedNodes
         self.name: str = name
+        if tags is None:
+            self.tags: set[str] = set()
+        else:
+            self.tags: set[str] = tags
 
     def __hash__(self) -> int:
         return self.id

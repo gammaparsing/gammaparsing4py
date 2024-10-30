@@ -15,6 +15,7 @@ class SolidTerminal(AbstractTerminal):
     def __init__(self, name: str):
         AbstractTerminal.__init__(self)
         self.name: str = name
+        self.tags : set[str] = set()
 
     def __repr__(self) -> str:
         return "SolidTerminal(name='{}')".format(self.name)

@@ -228,7 +228,13 @@ class ParserBuilder:
         rule.id = len(self.rules)
         self.rules.append(rule)
 
-    def addRegexRule(self, nonTerminal: str, gammaRegex: GammaRegex, name: str = None):
+    def addRegexRule(
+        self,
+        nonTerminal: str,
+        gammaRegex: GammaRegex,
+        name: str = None,
+        tags: set[str] = None,
+    ):
         ruleContent = buildRuleContent(gammaRegex)
         self.addRule(
             Rule(
@@ -236,6 +242,7 @@ class ParserBuilder:
                 ruleContent,
                 reverseRuleContent(ruleContent[0], ruleContent),
                 name=name,
+                tags=tags,
             )
         )
 

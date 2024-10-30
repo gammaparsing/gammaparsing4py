@@ -15,7 +15,7 @@ from gammaparsing4py.parser.parser import (
     ParserState,
 )
 from gammaparsing4py.parser.struct import Rule
-from gammaparsing4py.parser.symbols import AbstractTerminal, SpecialTerminal, Symbol
+from gammaparsing4py.parser.symbols import AbstractTerminal, SolidTerminal, SpecialTerminal, Symbol
 from gammaparsing4py.utils import PushbackIterator
 from pengine_utils import PEngineUtils
 
@@ -69,7 +69,7 @@ class Test_Loader(TestCase):
             )
 
             tokenizer = tokenizerBuilder.build(SpecialTerminal.EOF())
-            tokenizer.skipper = lambda token: token.key.id is None
+            tokenizer.skipper = lambda token: isinstance(token.key, SolidTerminal) and "SKIP" in token.key.tags
 
             RIGHT = 0
             LEFT = 1

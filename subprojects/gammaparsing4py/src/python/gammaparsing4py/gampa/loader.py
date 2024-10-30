@@ -122,9 +122,16 @@ def _readPattern(
     terminal: AbstractTerminal = None
     reluctant: bool = False
     above: set[AbstractTerminal] = set()
+    tags: set[str] = set()
+
+    # Reading tags
+
+    while flow.peek() == ord("@"):
+        tags.add(_readTag(flow))
 
     # Reading terminal
     terminal = parserBuilder.getTerminal(_readTerminalIdentifier(flow))
+    terminal.tags.update(tags)
 
     _read(flow, "<--")
 
@@ -158,6 +165,11 @@ def _readRule(
     name: str = None
     nonTerminal: NonTerminal = None
     gammaRegex: GammaRegex = None
+    tags: set[str] = set()
+
+    # Reading tags
+    while flow.peek() == ord("@"):
+        tags.add(_readTag(flow))
 
     # Reading name
     if flow.peek() == ord('"'):
@@ -176,4 +188,14 @@ def _readRule(
 
     _read(flow, ";")
 
-    parserBuilder.addRegexRule(nonTerminal, gammaRegex, name)
+    parserBuilder.addRegexRule(nonTerminal, gammaRegex, name, tags)
+
+
+@CharFlow.skipBlanksAndCommentsDecorator
+def _readTag(flow: CharFlow):
+    flow.read(ord("@"))
+    buffer = StringIO()
+    while flow.hasMore() and (chr(flow.peek()).isalnum() or flow.peek() == ord("_")):
+        buffer.write(chr(flow.next()))
+
+    return buffer.getvalue()
